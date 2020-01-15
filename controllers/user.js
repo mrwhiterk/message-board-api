@@ -1,8 +1,6 @@
 const User = require('../models/User')
 const dbErrorMessage = require('../helpers/dbErrorMessage')
 
-// const bcrypt = require('bcryptjs')
-
 module.exports = {
   signup: async (req, res) => {
     try {
@@ -21,8 +19,24 @@ module.exports = {
     } catch (err) {
       res.status(400).json({
         message: dbErrorMessage(err)
-        // message: err
       })
     }
+  },
+  login: async (req, res) => {
+    try {
+      const user = await User.findByCredentials(
+        req.body.username,
+        req.body.password
+      )
+
+      const token = await user.generateAuthToken()
+      res.send({ user, token })
+    } catch (err) {
+      res.status(400).send({ error: err })
+    }
+  },
+  logout: async (req, res) => {
+    res.send('you logged out')
   }
 }
+

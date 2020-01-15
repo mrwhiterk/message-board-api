@@ -2,8 +2,8 @@ var express = require('express');
 var router = express.Router();
 let userController = require('../controllers/user')
 const auth = require('../middleware/auth')
-const jwt = require('jsonwebtoken')
-const User = require('../models/User')
+// const jwt = require('jsonwebtoken')
+// const User = require('../models/User')
 
 router.get('/', function(req, res, next) {
   res.send('respond with a resource');
@@ -11,16 +11,8 @@ router.get('/', function(req, res, next) {
 
 router.post('/signup', userController.signup)
 
-router.post('/login', async (req, res) => {
+router.post('/login', userController.login)
 
-  try {
-    const user = await User.findByCredentials(req.body.username, req.body.password)
-    console.log('user', user)
-    const token = await user.generateAuthToken()
-    res.send({ user, token })
-  } catch (err) {
-    res.status(400).send({ error: err})
-  }
-})
+router.post('/logout', auth, userController.logout)
 
 module.exports = router;
