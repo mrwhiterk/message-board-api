@@ -6,12 +6,13 @@ var logger = require('morgan')
 var mongoose = require('mongoose')
 var cors = require('cors')
 require('dotenv').config()
+const passport = require('passport')
 
 var indexRouter = require('./routes/index')
 var usersRouter = require('./routes/users')
 
 var app = express()
-console.log(process.env.MONGODB_URI)
+
 mongoose
   .connect(process.env.MONGODB_URI, {
     useUnifiedTopology: true,
@@ -28,6 +29,24 @@ mongoose
 // view engine setup
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'jade')
+
+// passport
+
+const userJWTStrategy = require('./passport/index')
+
+app.use(passport.initialize())
+
+passport.serializeUser((user, cb) => {
+  cb(null, user)
+})
+
+passport.deserializeUser((user, cb) => {
+  cb(null, user)
+})
+
+passport.use('jwt-user', userJWTStrategy)
+
+// end
 
 app.use(cors())
 

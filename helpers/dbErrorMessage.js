@@ -1,41 +1,31 @@
 const getErrorMessage = err => {
   let message = ''
 
-  console.log(err)
-
   if (err.code) {
     switch (err.code) {
       case 11000:
       case 11001:
-        message = getDatabaseErrorMessage(err)
-        break
+        return getDatabaseErrorMessage(err)
+
       default:
-        message = 'Something went wrong'
+        return 'Something went wrong'
     }
   } else {
     for (let errName in err.errors) {
       if (err.errors[errName].message) {
-        message = err.errors[errName].message
+        return err.errors[errName].message
       }
     }
   }
-  return message
 }
 
 const getDatabaseErrorMessage = err => {
-  let resultMessage
+  let fieldName = err.message
+    .match(/\w+_/)
+    .join('')
+    .slice(0, -1)
 
-  try {
-    let objectName = err.message.substring(0, err.message.indexOf('_1'))
-
-    let whereToSlice = objectName.lastIndexOf(':') + 2
-
-    resultMessage = objectName.slice(whereToSlice) + ' already exist'
-  } catch (err) {
-    resultMessage = 'unique field already exists'
-  }
-
-  return resultMessage
+  return `${fieldName || 'unique field'} already exists`
 }
 
 module.exports = getErrorMessage

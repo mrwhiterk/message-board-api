@@ -1,13 +1,15 @@
-var express = require('express');
-var router = express.Router();
+var express = require('express')
+var router = express.Router()
 let userController = require('../controllers/user')
 const auth = require('../middleware/auth')
-// const jwt = require('jsonwebtoken')
-// const User = require('../models/User')
+const passport = require('passport')
 
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
-});
+router.get('/', passport.authenticate('jwt-user', { session: false }), function(
+  req,
+  res
+) {
+  res.send('respond with a resource')
+})
 
 router.post('/signup', userController.signup)
 
@@ -15,4 +17,6 @@ router.post('/login', userController.login)
 
 router.post('/logout', auth, userController.logout)
 
-module.exports = router;
+router.post('/signin', userController.signin)
+
+module.exports = router
