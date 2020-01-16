@@ -4,12 +4,11 @@ let userController = require('../controllers/user')
 const auth = require('../middleware/auth')
 const passport = require('passport')
 
-router.get('/', passport.authenticate('jwt-user', { session: false }), function(
-  req,
-  res
-) {
-  res.send('respond with a resource')
-})
+router.get(
+  '/',
+  passport.authenticate('jwt-user', { session: false }),
+  userController.index
+)
 
 router.post('/signup', userController.signup)
 

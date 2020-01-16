@@ -3,6 +3,8 @@ const dbErrorMessage = require('../helpers/dbErrorMessage')
 const authHelper = require('../helpers/auth')
 
 module.exports = {
+  index: async (req, res) => res.send('respond with a resource'),
+  
   signup: async (req, res) => {
     try {
       let user = await new User({
