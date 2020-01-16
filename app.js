@@ -8,7 +8,7 @@ var cors = require('cors')
 require('dotenv').config()
 const passport = require('passport')
 
-var indexRouter = require('./routes/index')
+
 var usersRouter = require('./routes/users')
 
 var app = express()
@@ -22,7 +22,6 @@ mongoose
     console.log(`db connected`)
   })
   .catch(err => {
-    // throw new Error(err)
     console.log(err)
   })
 
@@ -56,7 +55,7 @@ app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 
-app.use('/', indexRouter)
+
 app.use('/api/users', usersRouter)
 
 // catch 404 and forward to error handler

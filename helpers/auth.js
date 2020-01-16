@@ -9,7 +9,7 @@ const comparePassword = async (incomingPassword, userPassword) => {
     if (comparePassword) {
       return comparePassword
     } else {
-      throw new Error(409)
+      throw 409
     }
   } catch (err) {
     return err;
