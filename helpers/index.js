@@ -19,6 +19,18 @@ const checkDuplicateEntry = async (req, res) => {
   }
 }
 
+const findUserFromToken = async ({ _id }, done) => {
+  try {
+    if (_id) {
+      const user = await User.findById(_id)
+      return done(null, user || false)
+    }
+  } catch (err) {
+    return done(null, false)
+  }
+}
+
 module.exports = {
-  checkDuplicateEntry
+  checkDuplicateEntry,
+  findUserFromToken
 }

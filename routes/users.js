@@ -1,13 +1,9 @@
-const express = require('express')
-const router = express.Router()
-const { signup, signin, index} = require('../controllers/user')
-const passport = require('passport')
+const express = require('express'),
+  router = express.Router(),
+  { signup, signin, index } = require('../controllers/user'),
+  passport = require('passport')
 
-router.get(
-  '/',
-  passport.authenticate('jwt-user', { session: false }),
-  index
-)
+router.get('/', passport.authenticate('jwt-user'), index)
 
 router.post('/signup', signup)
 router.post('/signin', signin)
