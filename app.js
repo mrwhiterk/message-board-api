@@ -29,23 +29,15 @@ mongoose
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'jade')
 
-// passport
-
 const userJWTStrategy = require('./passport/index')
-
 app.use(passport.initialize())
-
 passport.serializeUser((user, cb) => {
   cb(null, user)
 })
-
 passport.deserializeUser((user, cb) => {
   cb(null, user)
 })
-
 passport.use('jwt-user', userJWTStrategy)
-
-// end
 
 app.use(cors())
 

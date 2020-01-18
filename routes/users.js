@@ -6,13 +6,13 @@ const passport = require('passport')
 
 router.get(
   '/',
-  passport.authenticate('jwt-user', { session: false }),
+  // passport.authenticate('jwt-user', { session: false }),
   userController.index
 )
 
 router.post('/signup', userController.signup)
 
-router.post('/login', userController.login)
+// router.post('/login', userController.login)
 
 router.post('/logout', auth, userController.logout)
 
