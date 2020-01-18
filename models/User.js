@@ -1,7 +1,5 @@
 const mongoose = require('mongoose')
-const moment = require('moment')
 const bcrypt = require('bcryptjs')
-const jwt = require('jsonwebtoken')
 
 let UserSchema = new mongoose.Schema(
   {

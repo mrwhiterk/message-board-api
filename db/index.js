@@ -1,16 +1,14 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
 
-(async () => {
+module.exports = async () => {
   try {
-    let result = await mongoose.connect(process.env.MONGODB_URI, {
+    mongoose.set('useCreateIndex', true)
+
+    await mongoose.connect(process.env.MONGODB_URI, {
       useUnifiedTopology: true,
       useNewUrlParser: true
     })
-
-    console.log('db connected')
   } catch (err) {
     console.log(err)
   }
-})()
-
-module.exports = mongoose
+}
