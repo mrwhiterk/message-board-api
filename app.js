@@ -13,21 +13,11 @@ var usersRouter = require('./routes/users')
 
 var app = express()
 
-mongoose
-  .connect(process.env.MONGODB_URI, {
-    useUnifiedTopology: true,
-    useNewUrlParser: true
-  })
-  .then(result => {
-    console.log(`db connected`)
-  })
-  .catch(err => {
-    console.log(err)
-  })
+require('./db')
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'))
-app.set('view engine', 'jade')
+// app.set('views', path.join(__dirname, 'views'))
+// app.set('view engine', 'jade')
 
 const userJWTStrategy = require('./passport/index')
 app.use(passport.initialize())

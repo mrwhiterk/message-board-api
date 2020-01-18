@@ -2,7 +2,7 @@ const User = require('../models/User')
 const dbErrorMessage = require('../helpers/dbErrorMessage')
 const authHelper = require('../helpers/auth')
 
-const index = () => async (req, res) => res.send('respond with a resource')
+const index = async (req, res) => res.send('respond with a resource')
 
 const checkDuplicateEntry = async (req, res) => {
   try {
@@ -38,28 +38,10 @@ const signup = async function(req, res) {
 
     res.send()
   } catch (err) {
-    res.status(405).json({
+    res.status(400).json({
       message: dbErrorMessage(err)
     })
   }
-}
-
-// const login = async (req, res) => {
-//   try {
-//     const user = await User.findByCredentials(
-//       req.body.username,
-//       req.body.password
-//     )
-
-//     const token = await user.generateAuthToken()
-//     res.send({ user, token })
-//   } catch (err) {
-//     res.status(400).send({ error: err })
-//   }
-// }
-
-const logout = async (req, res) => {
-  res.send('you logged out')
 }
 
 const signin = async (req, res) => {
@@ -85,7 +67,7 @@ const signin = async (req, res) => {
       })
     }
   } catch (err) {
-    res.status(400).json({
+    res.status(400).send({
       message: err
     })
   }
@@ -93,8 +75,6 @@ const signin = async (req, res) => {
 
 module.exports = {
   index,
-  checkDuplicateEntry,
   signup,
-  logout,
   signin
 }

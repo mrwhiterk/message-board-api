@@ -4,7 +4,6 @@ const User = require('../models/User')
 
 const keys = process.env.USER_SECRET_KEY
 
-
 const jwtOpts = {}
 jwtOpts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken()
 jwtOpts.secretOrKey = keys
