@@ -1,6 +1,15 @@
 const Post = require('../models/Post')
 const dbErrorMessage = require('../helpers/dbErrorMessage')
 
+const index = async (req, res) => {
+  try {
+    let posts = await Post.find()
+    res.send(posts)
+  } catch (err) {
+    res.status(400).send()
+  }
+}
+
 const create = async (req, res) => {
   try {
     let { text, photo } = req.body
@@ -28,4 +37,4 @@ const create = async (req, res) => {
   }
 }
 
-module.exports = { create }
+module.exports = { index, create }
