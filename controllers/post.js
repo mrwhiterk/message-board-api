@@ -1,29 +1,48 @@
 const Post = require('../models/Post')
 const dbErrorMessage = require('../helpers/dbErrorMessage')
+const formidable = require('formidable')
+const moment = require('moment')
+const now = moment()
+const { cloudinaryUpload } = require('../helpers')
 
 const index = async (req, res) => {
   try {
-    let posts = await Post.find()
-    res.send(posts)
+    let posts = await Post.find().populate('postedBy', '_id username')
+    res.status(200).send(posts)
   } catch (err) {
-    res.status(400).send()
+    res.status(400).send(err)
   }
 }
 
 const create = async (req, res) => {
   try {
-    let { text, photo } = req.body
+    let form = new formidable.IncomingForm()
+    form.keepExtensions = true
 
-    let post = new Post({
-      text,
-      photo,
-      postedBy: req.user._id
+    form.parse(req, async (err, fields, files) => {
+      if (err) return res.send(err)
+
+      let photoData = null
+
+      if (files.photo) {
+        photoData = await cloudinaryUpload(files.photo.path)
+      }
+
+      let post = new Post({
+        text: fields.text,
+        photo: photoData && photoData.secure_url,
+        postedBy: req.user._id,
+        created: now.format('dddd, MMMM Do YYYY, h:mm:ss a')
+      })
+
+      await post.save()
+
+      let populatedPost = await post
+        .populate('postedBy', '_id username')
+        .execPopulate()
+
+      res.send(populatedPost)
     })
-
-    await post.save()
-
-    res.send(post)
-
   } catch (error) {
     if (error.code === 11000) {
       res.status(400).send({

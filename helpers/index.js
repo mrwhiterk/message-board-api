@@ -1,4 +1,5 @@
 const User = require('../models/User')
+const cloudinary = require('cloudinary').v2
 
 const checkDuplicateEntry = async (req, res) => {
   try {
@@ -30,7 +31,21 @@ const findUserFromToken = async ({ _id }, done) => {
   }
 }
 
+const cloudinaryUpload = async url => {
+  cloudinary.config({
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+  })
+  try {
+    return await cloudinary.uploader.upload(url)
+  } catch (error) {
+    return error
+  }
+}
+
 module.exports = {
   checkDuplicateEntry,
-  findUserFromToken
+  findUserFromToken,
+  cloudinaryUpload
 }
