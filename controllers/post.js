@@ -56,4 +56,19 @@ const create = async (req, res) => {
   }
 }
 
-module.exports = { index, create }
+const deletePost = async (req, res) => {
+  try {
+    let deletedPost = await Post.findByIdAndDelete(req.params.id)
+      .populate('postedBy', '_id username')
+      .exec()
+    let posts = await Post.find()
+      .populate('postedBy', '_id username')
+      .exec()
+
+    res.status(200).send({ deletedPost, posts })
+  } catch (err) {
+    res.status(400).send(err)
+  }
+}
+
+module.exports = { index, create, deletePost }
