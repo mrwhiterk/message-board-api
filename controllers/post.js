@@ -1,14 +1,18 @@
 const Post = require('../models/Post')
 const dbErrorMessage = require('../helpers/dbErrorMessage')
 const formidable = require('formidable')
-const moment = require('moment')
-const now = moment()
+
 const { cloudinaryUpload, cloudinaryDestroy } = require('../helpers')
 
 const index = async (req, res) => {
   try {
-    let posts = await Post.find().populate('postedBy', '_id username')
-    res.status(200).send(posts)
+    let posts = await Post.find()
+      .populate('postedBy', '_id username')
+      .populate('comments.postedBy', '_id username')
+      .sort('-created')
+      .exec()
+
+    res.send(posts)
   } catch (err) {
     res.status(400).send(err)
   }
@@ -31,17 +35,16 @@ const create = async (req, res) => {
       let post = new Post({
         text: fields.text,
         photo: photoData && photoData.secure_url,
-        postedBy: req.user._id,
-        created: now.format('dddd, MMMM Do YYYY, h:mm:ss a')
+        postedBy: req.user._id
       })
 
-      await post.save()
+      let savedPost = await post.save()
 
-      let populatedPost = await post
-        .populate('postedBy', '_id username')
-        .execPopulate()
+      // let populatedPost = await post
+      //   .populate('postedBy', '_id username')
+      //   .execPopulate()
 
-      res.send(populatedPost)
+      res.send(savedPost)
     })
   } catch (error) {
     if (error.code === 11000) {
@@ -68,6 +71,7 @@ const deletePost = async (req, res) => {
 
     let posts = await Post.find()
       .populate('postedBy', '_id username')
+      .sort('-created')
       .exec()
 
     res.status(200).send({ deletedPost, posts })

@@ -1,7 +1,7 @@
-const mongoose = { Schema } = require('mongoose')
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema;
 
 const moment = require('moment')
-const now = moment()
 
 let PostSchema = new Schema(
   {
@@ -24,7 +24,7 @@ let PostSchema = new Schema(
         text: String,
         created: {
           type: String,
-          default: now.format('dddd, MMMM Do YYYY, h:mm:ss a')
+          default: () => moment().format('dddd, MMMM Do YYYY, h:mm:ss a')
         },
         postedBy: {
           type: Schema.ObjectId,
@@ -38,7 +38,7 @@ let PostSchema = new Schema(
     },
     created: {
       type: String,
-      default: now.format('dddd, MMMM Do YYYY, h:mm:ss a')
+      default: () => moment().format('dddd, MMMM Do YYYY, h:mm:ss a')
     }
   },
   {
@@ -49,4 +49,3 @@ let PostSchema = new Schema(
 const Post = mongoose.model('Post', PostSchema)
 
 module.exports = Post
-
