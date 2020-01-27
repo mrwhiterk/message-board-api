@@ -3,7 +3,7 @@ const dbErrorMessage = require('../helpers/dbErrorMessage')
 const formidable = require('formidable')
 const moment = require('moment')
 const now = moment()
-const { cloudinaryUpload } = require('../helpers')
+const { cloudinaryUpload, cloudinaryDestroy } = require('../helpers')
 
 const index = async (req, res) => {
   try {
@@ -61,6 +61,11 @@ const deletePost = async (req, res) => {
     let deletedPost = await Post.findByIdAndDelete(req.params.id)
       .populate('postedBy', '_id username')
       .exec()
+
+    if (deletedPost.photo) {
+      await cloudinaryDestroy(deletedPost.photo)
+    }
+
     let posts = await Post.find()
       .populate('postedBy', '_id username')
       .exec()

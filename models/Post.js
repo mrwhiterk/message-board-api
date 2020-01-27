@@ -1,8 +1,7 @@
-const mongoose = require('mongoose')
+const mongoose = { Schema } = require('mongoose')
+
 const moment = require('moment')
 const now = moment()
-const Schema = mongoose.Schema;
-const bcrypt = require('bcryptjs')
 
 let PostSchema = new Schema(
   {

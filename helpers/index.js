@@ -44,8 +44,27 @@ const cloudinaryUpload = async url => {
   }
 }
 
+const cloudinaryDestroy = async url => {
+  cloudinary.config({
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+  })
+
+  let lastSlash = url.lastIndexOf('/')
+  let filename = url.slice(lastSlash)
+  let id = filename.match(/\w+\./).join('').slice(0, -1)
+  
+  try {
+    return await cloudinary.uploader.destroy(id)
+  } catch (error) {
+    return error
+  }
+}
+
 module.exports = {
   checkDuplicateEntry,
   findUserFromToken,
-  cloudinaryUpload
+  cloudinaryUpload,
+  cloudinaryDestroy
 }
