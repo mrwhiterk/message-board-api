@@ -40,11 +40,11 @@ const create = async (req, res) => {
 
       let savedPost = await post.save()
 
-      // let populatedPost = await post
-      //   .populate('postedBy', '_id username')
-      //   .execPopulate()
+      let populatedNewPost = await savedPost
+        .populate('postedBy', '_id username')
+        .execPopulate()
 
-      res.send(savedPost)
+      res.send(populatedNewPost)
     })
   } catch (error) {
     if (error.code === 11000) {
