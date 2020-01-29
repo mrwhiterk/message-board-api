@@ -18,6 +18,47 @@ const index = async (req, res) => {
   }
 }
 
+const createComment = async (req, res) => {
+  let { id } = req.params
+  let { text } = req.body
+
+  try {
+    let post = await Post.findById(id)
+
+    let newComment = {
+      text,
+      postedBy: req.user._id
+    }
+
+    post.comments.push(newComment)
+    let savedPost = await post.save()
+    savedPost = await savedPost.populate('comments.postedBy').execPopulate()
+    let lastMessage = savedPost.comments[savedPost.comments.length - 1]
+
+    res.send(lastMessage)
+  } catch (error) {
+    res.send(error)
+  }
+}
+
+const deleteComment = async (req, res) => {
+  let { postId, id } = req.params
+
+  try {
+    let post = await Post.findById(postId)
+
+    post.comments = post.comments.filter(item => {
+      return item._id.toString() !== id.toString()
+    })
+
+    let savedPost = await post.save()
+
+    res.send(savedPost)
+  } catch (error) {
+    res.status(400).send(error)
+  }
+}
+
 const create = async (req, res) => {
   try {
     let form = new formidable.IncomingForm()
@@ -59,6 +100,28 @@ const create = async (req, res) => {
   }
 }
 
+const like = async (req, res) => {
+  let { id } = req.params
+
+  try {
+    let post = await Post.findById(id)
+
+    if (post.likes.includes(req.user._id)) {
+      post.likes = post.likes.filter(
+        item => item._id.toString() !== req.user._id.toString()
+      )
+    } else {
+      post.likes.push(req.user._id)
+    }
+
+    let savedPost = await post.save()
+
+    res.send(savedPost)
+  } catch (error) {
+    res.status(400).send(error)
+  }
+}
+
 const deletePost = async (req, res) => {
   try {
     let deletedPost = await Post.findByIdAndDelete(req.params.id)
@@ -80,4 +143,11 @@ const deletePost = async (req, res) => {
   }
 }
 
-module.exports = { index, create, deletePost }
+module.exports = {
+  index,
+  create,
+  deletePost,
+  createComment,
+  deleteComment,
+  like
+}
