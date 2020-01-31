@@ -106,20 +106,19 @@ const like = async (req, res) => {
   try {
     let post = await Post.findById(id)
 
-    if (post.likes.includes(req.user._id)) {
-      post.likes = post.likes.filter(
-        item => item._id.toString() !== req.user._id.toString()
-      )
-    } else {
-      post.likes.push(req.user._id)
-    }
+    post.likes.includes(req.user._id)
+      ? post.likes.pull(req.user._id)
+      : post.likes.push(req.user._id)
 
-    let savedPost = await post.save()
+    await post.save()
 
-    res.send(savedPost)
+    res.send(post)
   } catch (error) {
     res.status(400).send(error)
   }
+
+  try {
+  } catch (error) {}
 }
 
 const deletePost = async (req, res) => {

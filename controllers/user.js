@@ -16,7 +16,6 @@ const getUsers = async (req, res) => {
 const followUser = async (req, res) => {
   try {
     let { leaderId } = req.body
-
     let leader = await User.findById(leaderId)
 
     if (!leader.followers.includes(req.user._id)) {
