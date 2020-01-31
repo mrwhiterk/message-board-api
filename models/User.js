@@ -2,33 +2,30 @@ const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
-let UserSchema = new mongoose.Schema(
-  {
-    email: {
-      type: String,
-      trim: true,
-      unique: true,
-      required: 'Email is required'
-    },
-    username: {
-      type: String,
-      trim: true,
-      unique: true,
-      required: 'Username is required'
-    },
-    password: {
-      type: String,
-      required: 'Password is Required'
-    },
-    photo: {
-      type: String,
-      default: ''
-    }
+let UserSchema = new mongoose.Schema({
+  email: {
+    type: String,
+    trim: true,
+    unique: true,
+    required: 'Email is required'
   },
-  {
-    timestamps: true
-  }
-)
+  username: {
+    type: String,
+    trim: true,
+    unique: true,
+    required: 'Username is required'
+  },
+  password: {
+    type: String,
+    required: 'Password is Required'
+  },
+  photo: {
+    type: String,
+    default: ''
+  },
+  following: [{ type: mongoose.Schema.ObjectId, ref: 'User' }],
+  followers: [{ type: mongoose.Schema.ObjectId, ref: 'User' }]
+})
 
 UserSchema.pre('save', async function(next) {
   const user = this

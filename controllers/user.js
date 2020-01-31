@@ -3,7 +3,43 @@ const dbErrorMessage = require('../helpers/dbErrorMessage')
 // const authHelper = require('../helpers/auth')
 const { checkDuplicateEntry } = require('../helpers')
 
-const index = async (req, res) => res.send('respond with a resource')
+const getUsers = async (req, res) => {
+  try {
+    let users = await User.find({ _id: { $ne: req.user._id } })
+
+    res.send(users)
+  } catch (error) {
+    res.status(400).send(error)
+  }
+}
+
+const followUser = async (req, res) => {
+  try {
+    let { leaderId } = req.body
+
+    let leader = await User.findById(leaderId)
+
+    if (!leader.followers.includes(req.user._id)) {
+      leader.followers.push(req.user._id)
+    }
+
+    if (!req.user.following.includes(leaderId)) {
+      req.user.following.push(leaderId)
+    }
+
+    await leader.save()
+    await req.user.save()
+
+    leader = await leader
+      .populate('following', '_id username')
+      .populate('followers', '_id username')
+      .execPopulate()
+
+    res.send({ leader, follower: req.user })
+  } catch (error) {
+    res.status(400).send(error)
+  }
+}
 
 // I need to find out why mongoose unique field check doesn't always work
 const signup = async (req, res) => {
@@ -42,7 +78,8 @@ const signin = async ({ body: { username, password } }, res) => {
 }
 
 module.exports = {
-  index,
+  getUsers,
   signup,
-  signin
+  signin,
+  followUser
 }
