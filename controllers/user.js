@@ -5,11 +5,42 @@ const { checkDuplicateEntry } = require('../helpers')
 
 const getUsers = async (req, res) => {
   try {
-    let users = await User.find({ _id: { $ne: req.user._id } })
+    let users = await User.find({
+      _id: { $ne: req.user._id, $nin: req.user.following }
+    })
 
     res.send(users)
   } catch (error) {
     res.status(400).send(error)
+  }
+}
+
+const getUserProfileById = async (req, res) => {
+  try {
+    let user = await User.findById(req.params.id)
+      .populate('following', '_id username')
+      .populate('followers', '_id username')
+      .exec()
+
+    res.send(user)
+  } catch (error) {
+    res.send(error)
+  }
+}
+
+const getUserFollowerAndFollowing = async (req, res) => {
+  try {
+    let { following, followers } = await req.user
+      .populate('following', '_id username')
+      .populate('followers', '_id username')
+      .execPopulate()
+
+    res.send({
+      following: following,
+      followers: followers
+    })
+  } catch (error) {
+    res.send(error)
   }
 }
 
@@ -24,6 +55,32 @@ const followUser = async (req, res) => {
 
     if (!req.user.following.includes(leaderId)) {
       req.user.following.push(leaderId)
+    }
+
+    await leader.save()
+    await req.user.save()
+
+    leader = await leader
+      .populate('following', '_id username')
+      .populate('followers', '_id username')
+      .execPopulate()
+
+    res.send({ leader, follower: req.user })
+  } catch (error) {
+    res.status(400).send(error)
+  }
+}
+const unfollowUser = async (req, res) => {
+  try {
+    let { leaderId } = req.body
+    let leader = await User.findById(leaderId)
+
+    if (leader.followers.includes(req.user._id)) {
+      leader.followers.pull(req.user._id)
+    }
+
+    if (req.user.following.includes(leaderId)) {
+      req.user.following.pull(leaderId)
     }
 
     await leader.save()
@@ -80,5 +137,8 @@ module.exports = {
   getUsers,
   signup,
   signin,
-  followUser
+  followUser,
+  unfollowUser,
+  getUserFollowerAndFollowing,
+  getUserProfileById
 }

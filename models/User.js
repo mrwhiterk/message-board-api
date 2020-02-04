@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const moment = require('moment')
 
 let UserSchema = new mongoose.Schema({
   email: {
@@ -23,6 +24,10 @@ let UserSchema = new mongoose.Schema({
     type: String,
     default: ''
   },
+  created: {
+    type: String,
+    default: () => moment().format('dddd, MMMM Do YYYY, h:mm:ss a')
+  },
   following: [{ type: mongoose.Schema.ObjectId, ref: 'User' }],
   followers: [{ type: mongoose.Schema.ObjectId, ref: 'User' }]
 })
@@ -40,7 +45,12 @@ UserSchema.methods.generateAuthToken = async function() {
   const user = this
 
   let token = jwt.sign(
-    { _id: user._id.toString(), username: user.username },
+    {
+      _id: user._id.toString(),
+      username: user.username,
+      created: user.created,
+      email: user.email
+    },
     process.env.USER_SECRET_KEY,
     {
       expiresIn: 3600
