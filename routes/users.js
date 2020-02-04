@@ -23,7 +23,6 @@ router.get(
   passport.authenticate('jwt-user'),
   getUserFollowerAndFollowing
 )
-
 router.post('/followUser', passport.authenticate('jwt-user'), followUser)
 router.post('/unfollowUser', passport.authenticate('jwt-user'), unfollowUser)
 router.post('/signup', signup)

@@ -20,6 +20,7 @@ const getUserProfileById = async (req, res) => {
     let user = await User.findById(req.params.id)
       .populate('following', '_id username')
       .populate('followers', '_id username')
+      .select('-password -__v')
       .exec()
 
     res.send(user)
